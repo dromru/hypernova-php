@@ -1,0 +1,26 @@
+name: MasterCi
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  master-ci:
+    runs-on: ubuntu-latest
+    container:
+      image: php:7.4-cli
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v1
+
+      - name: Preparing
+        run: |
+          curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+          composer install --dev --no-interaction --prefer-dist
+
+      - name: PHPStan
+        run: composer analyse
+
+      - name: PHPUnit
+        run: composer test
