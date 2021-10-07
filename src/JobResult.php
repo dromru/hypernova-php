@@ -40,7 +40,7 @@ final class JobResult
      */
     public $duration;
 
-    public static function fromServerResult(array $serverResult, Job $originalJob): self
+    public static function fromServerResult(?array $serverResult, Job $originalJob): self
     {
         if (empty($serverResult['html']) && empty($serverResult['error'])) {
             throw new \InvalidArgumentException('Server result malformed');

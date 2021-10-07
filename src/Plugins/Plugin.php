@@ -1,13 +1,8 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: beroberts
- * Date: 1/13/17
- * Time: 4:18 PM
- */
-
 namespace WF\Hypernova\Plugins;
+
+use WF\Hypernova\Job;
 
 interface Plugin
 {
@@ -20,20 +15,20 @@ interface Plugin
     public function getViewData($name, array $data);
 
     /**
-     * @param \WF\Hypernova\Job[]   $jobs
-     * @param \WF\Hypernova\Job[]   $originalJobs
-     * @return \WF\Hypernova\Job
+     * @param Job[]   $jobs
+     * @param Job[]   $originalJobs
+     * @return Job[]
      */
     public function prepareRequest(array $jobs, array $originalJobs);
 
     /**
-     * @param \WF\Hypernova\Job[] $jobs
+     * @param Job[] $jobs
      * @return bool
      */
     public function shouldSendRequest($jobs);
 
     /**
-     * @param \WF\Hypernova\Job[] $jobs
+     * @param Job[] $jobs
      *
      * @return void
      */
@@ -41,7 +36,7 @@ interface Plugin
 
     /**
      * @param \Exception|mixed $error
-     * @param \WF\Hypernova\Job[] $jobOrJobs
+     * @param Job[] $jobOrJobs
      *
      * @return void
      */

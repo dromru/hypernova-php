@@ -34,7 +34,7 @@ class Renderer
     private $config;
 
     /**
-     * @var \WF\Hypernova\Job[]
+     * @var Job[]
      */
     protected $incomingJobs = [];
 
@@ -67,8 +67,8 @@ class Renderer
     /**
      * Add a job
      *
-     * @param string $id
-     * @param \WF\Hypernova\Job|array $job Job to add, { [view]: { name: String, data: ReactProps } }
+     * @param string    $id
+     * @param Job|array $job Job to add, { [view]: { name: String, data: ReactProps } }
      */
     public function addJob($id, $job)
     {
@@ -103,26 +103,23 @@ class Renderer
     }
 
     /**
-     * @param \WF\Hypernova\Job[] $jobs
-     *
-     * @return \WF\Hypernova\JobResult[]
+     * @param Job[] $jobs
      */
-    protected function makeRequest($jobs)
+    protected function makeRequest($jobs): Response
     {
         foreach ($this->plugins as $plugin) {
             $plugin->willSendRequest($jobs);
         }
 
         $response = $this->doRequest($jobs);
+
         return $this->finalize($response);
     }
 
     /**
-     * @param \WF\Hypernova\JobResult[] $jobResults
-     *
-     * @return \WF\Hypernova\Response
+     * @param JobResult[] $jobResults
      */
-    protected function finalize($jobResults)
+    protected function finalize(array $jobResults): Response
     {
         foreach ($jobResults as $jobResult) {
             if ($jobResult->error) {
@@ -151,9 +148,9 @@ class Renderer
     }
 
     /**
-     * @param \WF\Hypernova\Job[] $jobs
+     * @param Job[] $jobs
      *
-     * @return \WF\Hypernova\JobResult[]
+     * @return JobResult[]
      * @throws \Exception
      */
     protected function doRequest($jobs)
@@ -188,7 +185,7 @@ class Renderer
 
     /**
      * @param mixed $topLevelError
-     * @param \WF\Hypernova\Job[] $jobs
+     * @param Job[] $jobs
      *
      * @return \WF\Hypernova\Response
      */
@@ -196,7 +193,7 @@ class Renderer
     {
         $result = new Response();
         $result->error = $topLevelError;
-        $result->results = array_map(function (\WF\Hypernova\Job $job) {
+        $result->results = array_map(function (Job $job) {
             $jobResult = new JobResult();
             $uuid = \Ramsey\Uuid\Uuid::uuid4();
             $jobResult->html = $this->getFallbackHTML($job->name, $job->data, $uuid);
@@ -228,11 +225,11 @@ class Renderer
     }
 
     /**
-     * @return \WF\Hypernova\Job[]
+     * @return Job[]
      */
     protected function createJobs()
     {
-        return array_map(function (\WF\Hypernova\Job $job) {
+        return array_map(function (Job $job) {
             foreach ($this->plugins as $plugin) {
                 try {
                     $job = new Job($job->name, $plugin->getViewData($job->name, $job->data), $job->metadata);
