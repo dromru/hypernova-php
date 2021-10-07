@@ -1,50 +1,38 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: beroberts
- * Date: 1/14/17
- * Time: 8:48 AM
- */
+declare(strict_types=1);
 
 namespace WF\Hypernova\Tests;
 
+use PHPUnit\Framework\TestCase;
 use WF\Hypernova\Job;
 use WF\Hypernova\JobResult;
+use WF\Hypernova\Plugins\Plugin;
 use WF\Hypernova\Renderer;
 use WF\Hypernova\Plugins\BasePlugin;
+use WF\Hypernova\Response;
 
-class RendererTest extends \PHPUnit\Framework\TestCase
+class RendererTest extends TestCase
 {
-    public static $rawServerResponse = '{"success":true,"error":null,"results":{"myView":{"name":"my_component","html":"<div data-hypernova-key=\"my_component\" data-hypernova-id=\"54f9f349-c59b-46b1-9e4e-e3fa17cc5d63\"><div>My Component</div></div>\n<script type=\"application/json\" data-hypernova-key=\"my_component\" data-hypernova-id=\"54f9f349-c59b-46b1-9e4e-e3fa17cc5d63\"><!--{\"foo\":{\"bar\":[],\"baz\":[]}}--></script>","meta":{},"duration":2.501506,"statusCode":200,"success":true,"error":null},"myOtherView":{"name":"my_component","html":"<div data-hypernova-key=\"my_component\" data-hypernova-id=\"54f9f349-c59b-46b1-9e4e-e3fa17cc5d63\"><div>My Component</div></div>\n<script type=\"application/json\" data-hypernova-key=\"my_component\" data-hypernova-id=\"54f9f349-c59b-46b1-9e4e-e3fa17cc5d63\"><!--{\"foo\":{\"bar\":[],\"baz\":[]}}--></script>","meta":{},"duration":2.501506,"statusCode":200,"success":true,"error":null}}}';
+    public static string $rawServerResponse = '{"success":true,"error":null,"results":{"myView":{"name":"my_component","html":"<div data-hypernova-key=\"my_component\" data-hypernova-id=\"54f9f349-c59b-46b1-9e4e-e3fa17cc5d63\"><div>My Component</div></div>\n<script type=\"application/json\" data-hypernova-key=\"my_component\" data-hypernova-id=\"54f9f349-c59b-46b1-9e4e-e3fa17cc5d63\"><!--{\"foo\":{\"bar\":[],\"baz\":[]}}--></script>","meta":{},"duration":2.501506,"statusCode":200,"success":true,"error":null},"myOtherView":{"name":"my_component","html":"<div data-hypernova-key=\"my_component\" data-hypernova-id=\"54f9f349-c59b-46b1-9e4e-e3fa17cc5d63\"><div>My Component</div></div>\n<script type=\"application/json\" data-hypernova-key=\"my_component\" data-hypernova-id=\"54f9f349-c59b-46b1-9e4e-e3fa17cc5d63\"><!--{\"foo\":{\"bar\":[],\"baz\":[]}}--></script>","meta":{},"duration":2.501506,"statusCode":200,"success":true,"error":null}}}';
 
-    public static $rawErrorResponse = '{"success":true,"error":null,"results":{"myView":{"name":"nonexistent_component","html":null,"meta":{},"duration":0.521553,"statusCode":404,"success":false,"error":{"name":"ReferenceError","message":"Component \"nonexistent_component\" not registered","stack":["ReferenceError: Component \"nonexistent_component\" not registered","at YOUR-COMPONENT-DID-NOT-REGISTER_nonexistent_component:1:1","at notFound (/src/hypernova/node_modules/hypernova/lib/utils/BatchManager.js:27:15)","at /src/hypernova/node_modules/hypernova/lib/utils/BatchManager.js:178:19","at tryCatcher (/src/hypernova/node_modules/bluebird/js/release/util.js:16:23)","at Promise._settlePromiseFromHandler (/src/hypernova/node_modules/bluebird/js/release/promise.js:510:31)","at Promise._settlePromise (/src/hypernova/node_modules/bluebird/js/release/promise.js:567:18)","at Promise._settlePromiseCtx (/src/hypernova/node_modules/bluebird/js/release/promise.js:604:10)","at Async._drainQueue (/src/hypernova/node_modules/bluebird/js/release/async.js:138:12)","at Async._drainQueues (/src/hypernova/node_modules/bluebird/js/release/async.js:143:10)","at Immediate.Async.drainQueues (/src/hypernova/node_modules/bluebird/js/release/async.js:17:14)","atrunCallback (timers.js:574:20)","at tryOnImmediate (timers.js:554:5)","at processImmediate [as _immediateCallback] (timers.js:533:5)"]}}}}';
+    public static string $rawErrorResponse = '{"success":true,"error":null,"results":{"myView":{"name":"nonexistent_component","html":null,"meta":{},"duration":0.521553,"statusCode":404,"success":false,"error":{"name":"ReferenceError","message":"Component \"nonexistent_component\" not registered","stack":["ReferenceError: Component \"nonexistent_component\" not registered","at YOUR-COMPONENT-DID-NOT-REGISTER_nonexistent_component:1:1","at notFound (/src/hypernova/node_modules/hypernova/lib/utils/BatchManager.js:27:15)","at /src/hypernova/node_modules/hypernova/lib/utils/BatchManager.js:178:19","at tryCatcher (/src/hypernova/node_modules/bluebird/js/release/util.js:16:23)","at Promise._settlePromiseFromHandler (/src/hypernova/node_modules/bluebird/js/release/promise.js:510:31)","at Promise._settlePromise (/src/hypernova/node_modules/bluebird/js/release/promise.js:567:18)","at Promise._settlePromiseCtx (/src/hypernova/node_modules/bluebird/js/release/promise.js:604:10)","at Async._drainQueue (/src/hypernova/node_modules/bluebird/js/release/async.js:138:12)","at Async._drainQueues (/src/hypernova/node_modules/bluebird/js/release/async.js:143:10)","at Immediate.Async.drainQueues (/src/hypernova/node_modules/bluebird/js/release/async.js:17:14)","atrunCallback (timers.js:574:20)","at tryOnImmediate (timers.js:554:5)","at processImmediate [as _immediateCallback] (timers.js:533:5)"]}}}}';
 
-    private static $serverErrorResponse = '{"success":true,"error":"something went wrong","results":{"id1":{"name":"my_component","html":"<div data-hypernova-key=\"my_component\" data-hypernova-id=\"54f9f349-c59b-46b1-9e4e-e3fa17cc5d63\"><div>My Component</div></div>\n<script type=\"application/json\" data-hypernova-key=\"my_component\" data-hypernova-id=\"54f9f349-c59b-46b1-9e4e-e3fa17cc5d63\"><!--{\"foo\":{\"bar\":[],\"baz\":[]}}--></script>","meta":{},"duration":2.501506,"statusCode":200,"success":true,"error":null},"myOtherView":{"name":"my_component","html":"<div data-hypernova-key=\"my_component\" data-hypernova-id=\"54f9f349-c59b-46b1-9e4e-e3fa17cc5d63\"><div>My Component</div></div>\n<script type=\"application/json\" data-hypernova-key=\"my_component\" data-hypernova-id=\"54f9f349-c59b-46b1-9e4e-e3fa17cc5d63\"><!--{\"foo\":{\"bar\":[],\"baz\":[]}}--></script>","meta":{},"duration":2.501506,"statusCode":200,"success":true,"error":null}}}';
+    private static string $serverErrorResponse = '{"success":true,"error":"something went wrong","results":{"id1":{"name":"my_component","html":"<div data-hypernova-key=\"my_component\" data-hypernova-id=\"54f9f349-c59b-46b1-9e4e-e3fa17cc5d63\"><div>My Component</div></div>\n<script type=\"application/json\" data-hypernova-key=\"my_component\" data-hypernova-id=\"54f9f349-c59b-46b1-9e4e-e3fa17cc5d63\"><!--{\"foo\":{\"bar\":[],\"baz\":[]}}--></script>","meta":{},"duration":2.501506,"statusCode":200,"success":true,"error":null},"myOtherView":{"name":"my_component","html":"<div data-hypernova-key=\"my_component\" data-hypernova-id=\"54f9f349-c59b-46b1-9e4e-e3fa17cc5d63\"><div>My Component</div></div>\n<script type=\"application/json\" data-hypernova-key=\"my_component\" data-hypernova-id=\"54f9f349-c59b-46b1-9e4e-e3fa17cc5d63\"><!--{\"foo\":{\"bar\":[],\"baz\":[]}}--></script>","meta":{},"duration":2.501506,"statusCode":200,"success":true,"error":null}}}';
 
-    /**
-     * @var \WF\Hypernova\Renderer
-     */
-    private $renderer;
-
-    /**
-     * @var \WF\Hypernova\Job
-     */
-    private $defaultJob;
+    private Renderer $renderer;
+    private Job $defaultJob;
 
     /**
      * {@inheritdoc}
      */
     public function setUp(): void
     {
-        $this->renderer = new \WF\Hypernova\Renderer('http://localhost:8080/batch');
+        $this->renderer = new Renderer('http://localhost:8080/batch');
         $this->defaultJob = new Job('my_component', ['foo' => ['bar' => [], 'baz' => []]]);
     }
 
-    /**
-     * @return void
-     */
-    public function testCreateJobs()
+    public function testCreateJobs(): void
     {
         $plugin = $this->createMock(BasePlugin::class);
 
@@ -61,7 +49,7 @@ class RendererTest extends \PHPUnit\Framework\TestCase
         $this->assertArrayHasKey('id1', $this->callInternalMethodOfThing($this->renderer, 'createJobs'));
     }
 
-    public function testCreateJobsWithMetadata()
+    public function testCreateJobsWithMetadata(): void
     {
         $plugin = $this->createMock(BasePlugin::class);
 
@@ -78,7 +66,7 @@ class RendererTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('foo', $createdJobs['id1']->metadata['some_other']);
     }
 
-    public function testMultipleJobsGetCreated()
+    public function testMultipleJobsGetCreated(): void
     {
         $plugin = $this->createMock(BasePlugin::class);
 
@@ -94,7 +82,7 @@ class RendererTest extends \PHPUnit\Framework\TestCase
         $this->callInternalMethodOfThing($this->renderer, 'createJobs');
     }
 
-    public function testPrepareRequestCallsPlugin()
+    public function testPrepareRequestCallsPlugin(): void
     {
         $plugin = $this->createMock(BasePlugin::class);
 
@@ -111,7 +99,7 @@ class RendererTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($allJobs, $this->callInternalMethodOfThing($this->renderer, 'prepareRequest', [$allJobs])[1]);
     }
 
-    public function testShouldSend()
+    public function testShouldSend(): void
     {
         $pluginDontSend = $this->createMock(BasePlugin::class);
         $pluginDoSend = $this->createMock(BasePlugin::class);
@@ -134,7 +122,7 @@ class RendererTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($result[0]);
     }
 
-    public function testRenderShouldNotSend()
+    public function testRenderShouldNotSend(): void
     {
         $renderer = $this->getMockedRenderer(false);
 
@@ -148,17 +136,17 @@ class RendererTest extends \PHPUnit\Framework\TestCase
         $renderer->addPlugin($plugin);
 
         /**
-         * @var \WF\Hypernova\Response $response
+         * @var Response $response
          */
         $response = $renderer->render();
 
-        $this->assertInstanceOf(\WF\Hypernova\Response::class, $response);
+        $this->assertInstanceOf(Response::class, $response);
         $this->assertNull($response->error);
 
         $this->assertStringStartsWith('<div data-hypernova-key="my_component"', $response->results['id1']->html);
     }
 
-    public function testGetViewDataHandlesExceptions()
+    public function testGetViewDataHandlesExceptions(): void
     {
         $plugin = $this->createMock(BasePlugin::class);
 
@@ -179,7 +167,7 @@ class RendererTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider errorPluginProvider
      */
-    public function testPrepareRequestErrorsCauseFallback($plugin)
+    public function testPrepareRequestErrorsCauseFallback(Plugin $plugin): void
     {
         $renderer = $this->getMockBuilder(Renderer::class)
             ->disableOriginalConstructor()
@@ -193,17 +181,17 @@ class RendererTest extends \PHPUnit\Framework\TestCase
         $renderer->addPlugin($plugin);
 
         /**
-         * @var \WF\Hypernova\Response $response
+         * @var Response $response
          */
         $response = $renderer->render();
 
-        $this->assertInstanceOf(\WF\Hypernova\Response::class, $response);
+        $this->assertInstanceOf(Response::class, $response);
         $this->assertNotEmpty($response->error);
 
         $this->assertStringStartsWith('<div data-hypernova-key="my_component"', $response->results['id1']->html);
     }
 
-    public function errorPluginProvider()
+    public function errorPluginProvider(): array
     {
         $pluginThatThrowsInPrepareRequest = $this->createMock(BasePlugin::class);
 
@@ -230,7 +218,7 @@ class RendererTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testWillSendRequest()
+    public function testWillSendRequest(): void
     {
         $renderer = $this->getMockedRenderer(true);
 
@@ -245,7 +233,7 @@ class RendererTest extends \PHPUnit\Framework\TestCase
         $renderer->render();
     }
 
-    public function testOnSuccess()
+    public function testOnSuccess(): void
     {
         $renderer = $this->getMockedRenderer(true);
 
@@ -259,7 +247,7 @@ class RendererTest extends \PHPUnit\Framework\TestCase
         $renderer->render();
     }
 
-    public function testAfterResponse()
+    public function testAfterResponse(): void
     {
         $renderer = $this->getMockedRenderer(true);
 
@@ -273,7 +261,7 @@ class RendererTest extends \PHPUnit\Framework\TestCase
         $renderer->render();
     }
 
-    public function testOnErrorInFinalize()
+    public function testOnErrorInFinalize(): void
     {
         $renderer = $this->getMockedRenderer(true, 200, 'doRequest');
 
@@ -295,7 +283,7 @@ class RendererTest extends \PHPUnit\Framework\TestCase
         $renderer->render();
     }
 
-    public function testExceptionInMakeRequest()
+    public function testExceptionInMakeRequest(): void
     {
         $renderer = $this->getMockedRenderer(true, 500, 'fallback');
 
@@ -305,7 +293,7 @@ class RendererTest extends \PHPUnit\Framework\TestCase
         $renderer->render();
     }
 
-    public function testServerMissingResponse()
+    public function testServerMissingResponse(): void
     {
         $reallyBadServerError = '{"success":true,"error":"something went wrong","results":{}';
 
@@ -316,7 +304,7 @@ class RendererTest extends \PHPUnit\Framework\TestCase
         $this->assertStringStartsWith('<div data-hypernova-key="my_component"', $response->results['id1']->html);
     }
 
-    public function testServerTopLevelError()
+    public function testServerTopLevelError(): void
     {
         $renderer = $this->getMockedRenderer(true, 200, [], self::$serverErrorResponse);
 
@@ -334,16 +322,14 @@ class RendererTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param bool $shouldSendRequest
-     * @param int $clientResponseCode
      * @param string|array $additionalMockMethods
      * @return \PHPUnit\Framework\MockObject\MockObject|Renderer
      */
     private function getMockedRenderer(
-        $shouldSendRequest,
-        $clientResponseCode = 200,
+        bool $shouldSendRequest,
+        ?int $clientResponseCode = 200,
         $additionalMockMethods = [],
-        $clientResponse = null
+        ?string $clientResponse = null
     ) {
         // Secret sauce so we don't have to mock our HTTP client
         $mockHandler = new \GuzzleHttp\Handler\MockHandler(

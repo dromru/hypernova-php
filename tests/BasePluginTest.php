@@ -16,7 +16,7 @@ class BasePluginTest extends TestCase
         $job = Job::fromArray(['name' => 'foo', 'data' => ['bar' => 'baz']]);
         $jobs = [$job];
 
-        $this->assertEquals($jobs, $plugin->prepareRequest($jobs, [$jobs]));
+        $this->assertEquals($jobs, $plugin->prepareRequest($jobs, $jobs));
     }
 
     public function testAfterResponse(): void

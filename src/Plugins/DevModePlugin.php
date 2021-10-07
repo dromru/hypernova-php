@@ -1,26 +1,22 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: beroberts
- * Date: 1/17/17
- * Time: 12:37 PM
- */
 
 namespace WF\Hypernova\Plugins;
 
+use WF\Hypernova\JobResult;
+
 class DevModePlugin extends BasePlugin
 {
-    public function afterResponse($jobResults)
+    public function afterResponse($jobResults): array
     {
         return array_map([$this, 'wrapErrors'], $jobResults);
     }
 
     /**
-     * @param \WF\Hypernova\JobResult $jobResult
+     * @param JobResult $jobResult
      *
-     * @return string|\WF\Hypernova\JobResult
+     * @return string|JobResult
      */
-    protected function wrapErrors(\WF\Hypernova\JobResult $jobResult)
+    protected function wrapErrors(JobResult $jobResult)
     {
         if (!$jobResult->error) {
             return $jobResult;
@@ -50,7 +46,10 @@ class DevModePlugin extends BasePlugin
         return $jobResult;
     }
 
-    protected function formatError($error)
+    /**
+     * @param mixed $error
+     */
+    protected function formatError($error): array
     {
         return [
             !empty($error['message']) ? '<li><strong>' . $error['message'] . '</strong></li>' : '',

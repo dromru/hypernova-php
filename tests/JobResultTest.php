@@ -16,13 +16,13 @@ class JobResultTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider badServerResultProvider
      */
-    public function testFromServerResultBadData($data)
+    public function testFromServerResultBadData(?array $data): void
     {
         $this->expectException(\InvalidArgumentException::class);
         JobResult::fromServerResult($data, new Job('foo', []));
     }
 
-    public function badServerResultProvider()
+    public function badServerResultProvider(): array
     {
         return [
             [null],
@@ -31,7 +31,7 @@ class JobResultTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testFromServerResultPopulates()
+    public function testFromServerResultPopulates(): void
     {
         $originalJob = new Job('foo', []);
         $jobResult = JobResult::fromServerResult(['success' => true, 'html' => '<div>data</div>', 'error' => null], $originalJob);
@@ -41,7 +41,8 @@ class JobResultTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($originalJob, $jobResult->originalJob);
     }
 
-    public function testToString() {
+    public function testToString(): void
+    {
         $originalJob = new Job('foo', []);
         $jobResult = JobResult::fromServerResult(['success' => true, 'html' => '<div>data</div>', 'error' => null], $originalJob);
 

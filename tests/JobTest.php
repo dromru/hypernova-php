@@ -1,30 +1,24 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: beroberts
- * Date: 1/14/17
- * Time: 10:28 AM
- */
+
+declare(strict_types=1);
 
 namespace WF\Hypernova\Tests;
 
-class JobTest extends \PHPUnit\Framework\TestCase
+use PHPUnit\Framework\TestCase;
+use WF\Hypernova\Job;
+
+class JobTest extends TestCase
 {
     /**
-     * @param array $arr
-     *
      * @dataProvider badFactoryDataProvider
      */
-    public function testThrowsMalformedException($arr)
+    public function testThrowsMalformedException(array $arr): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        \WF\Hypernova\Job::fromArray($arr);
+        Job::fromArray($arr);
     }
 
-    /**
-     * @return array
-     */
-    public function badFactoryDataProvider()
+    public function badFactoryDataProvider(): array
     {
         return [
             [[]],
@@ -33,23 +27,17 @@ class JobTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @return void
-     */
-    public function testFactoryPopulates()
+    public function testFactoryPopulates(): void
     {
-        $job = \WF\Hypernova\Job::fromArray(['name' => 'my_component', 'data' => ['some' => 'data']]);
+        $job = Job::fromArray(['name' => 'my_component', 'data' => ['some' => 'data']]);
 
         $this->assertEquals('my_component', $job->name);
         $this->assertEquals(['some' => 'data'], $job->data);
     }
 
-    /**
-     * @return void
-     */
-    public function testFactoryPopulatesWithMetadata()
+    public function testFactoryPopulatesWithMetadata(): void
     {
-        $job = \WF\Hypernova\Job::fromArray(['name' => 'my_component', 'data' => ['some' => 'data'], 'metadata' => ['some_other' => 'metadata']]);
+        $job = Job::fromArray(['name' => 'my_component', 'data' => ['some' => 'data'], 'metadata' => ['some_other' => 'metadata']]);
 
         $this->assertEquals('my_component', $job->name);
         $this->assertEquals(['some' => 'data'], $job->data);

@@ -67,10 +67,9 @@ class Renderer
     /**
      * Add a job
      *
-     * @param string    $id
      * @param Job|array $job Job to add, { [view]: { name: String, data: ReactProps } }
      */
-    public function addJob($id, $job)
+    public function addJob(string $id, $job): void
     {
         if (is_array($job)) {
             $job = Job::fromArray($job);
@@ -219,7 +218,7 @@ class Renderer
             '<div data-hypernova-key="%1$s" data-hypernova-id="%2$s"></div>
     <script type="application/json" data-hypernova-key="%1$s" data-hypernova-id="%2$s"><!--%3$s--></script>',
             $moduleName,
-            $uuid,
+            $uuid->toString(),
             json_encode($data)
         );
     }

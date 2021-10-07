@@ -1,23 +1,18 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: beroberts
- * Date: 1/14/17
- * Time: 8:57 AM
- */
 
 namespace WF\Hypernova;
 
 final class Job implements \JsonSerializable
 {
-    public $name;
+    public string $name = '';
+    public ?array $data = null;
 
-    public $data;
-
+    /**
+     * @var mixed
+     */
     public $metadata;
 
-
-    public function __construct($name, $data, $metadata = [])
+    public function __construct(string $name, ?array $data = null, array $metadata = [])
     {
         $this->name = $name;
         $this->data = $data;
@@ -28,11 +23,8 @@ final class Job implements \JsonSerializable
      * Factory to create from ['viewName' => ['name' => $name, 'data' => $data, 'metadata' => $metadata]]
      *
      * @param array $arr input array
-     *
-     * @return \WF\Hypernova\Job
-     * @throws \InvalidArgumentException
      */
-    public static function fromArray(array $arr)
+    public static function fromArray(array $arr): self
     {
         if (empty($arr['name']) || !isset($arr['data'])) {
             throw new \InvalidArgumentException('malformed job');
