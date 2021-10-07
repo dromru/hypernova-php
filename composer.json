@@ -2,7 +2,7 @@
     "name": "drom/hypernova-php",
     "description": "A PHP client for hypernova.  https://github.com/airbnb/hypernova",
     "type": "library",
-    "version": "0.0.1",
+    "version": "3.0.0",
     "require": {
         "php": ">=7.4",
         "guzzlehttp/guzzle": "^7.2",
