@@ -12,7 +12,8 @@
     "require-dev": {
         "phpunit/phpunit": "9.5.10",
         "phpstan/phpstan": "0.12.99",
-        "phpstan/phpstan-phpunit": "^0.12.22"
+        "phpstan/phpstan-phpunit": "^0.12.22",
+        "friendsofphp/php-cs-fixer": "^3.2"
     },
     "license": "BSD-2-Clause",
     "authors": [
@@ -28,7 +29,9 @@
         "psr-4": { "WF\\Hypernova\\Tests\\": "tests/" }
     },
     "scripts": {
-        "test": "./vendor/bin/phpunit --colors=always"
+        "test": "./vendor/bin/phpunit --colors=always",
+        "analyse": "./vendor/bin/phpstan analyse src tests",
+        "fix": "./vendor/bin/php-cs-fixer fix"
     },
     "keywords": [
         "react",

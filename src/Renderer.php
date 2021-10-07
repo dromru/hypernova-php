@@ -14,7 +14,6 @@ use Ramsey\Uuid\Uuid;
 
 class Renderer
 {
-
     /**
      * @var array default configuration that will be passed to HTTP client
      */

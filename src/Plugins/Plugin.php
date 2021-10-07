@@ -14,8 +14,8 @@ interface Plugin
     public function getViewData($name, ?array $data);
 
     /**
-     * @param Job[]   $jobs
-     * @param Job[]   $originalJobs
+     * @param Job[] $jobs
+     * @param Job[] $originalJobs
      * @return Job[]
      */
     public function prepareRequest(array $jobs, array $originalJobs);
