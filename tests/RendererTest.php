@@ -337,11 +337,14 @@ class RendererTest extends \PHPUnit\Framework\TestCase
      * @param bool $shouldSendRequest
      * @param int $clientResponseCode
      * @param string|array $additionalMockMethods
-     *
-     * @return \WF\Hypernova\Renderer|\PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject|Renderer
      */
-    private function getMockedRenderer($shouldSendRequest, $clientResponseCode = 200, $additionalMockMethods = [], $clientResponse = null)
-    {
+    private function getMockedRenderer(
+        $shouldSendRequest,
+        $clientResponseCode = 200,
+        $additionalMockMethods = [],
+        $clientResponse = null
+    ) {
         // Secret sauce so we don't have to mock our HTTP client
         $mockHandler = new \GuzzleHttp\Handler\MockHandler(
             [

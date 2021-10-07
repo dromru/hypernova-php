@@ -200,7 +200,7 @@ class Renderer
             $jobResult = new JobResult();
             $uuid = \Ramsey\Uuid\Uuid::uuid4();
             $jobResult->html = $this->getFallbackHTML($job->name, $job->data, $uuid);
-            $jobResult->meta = ['uuid' => (string) $uuid];
+            $jobResult->meta = ['uuid' => $uuid->toString()];
             $jobResult->originalJob = $job;
 
             return $jobResult;

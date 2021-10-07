@@ -26,7 +26,7 @@ final class JobResult
     public $success;
 
     /**
-     * @var \WF\Hypernova\Job
+     * @var Job
      */
     public $originalJob;
 
@@ -40,13 +40,7 @@ final class JobResult
      */
     public $duration;
 
-    /**
-     * @param $serverResult
-     * @param \WF\Hypernova\Job $originalJob
-     *
-     * @return \WF\Hypernova\JobResult
-     */
-    public static function fromServerResult($serverResult, \WF\Hypernova\Job $originalJob)
+    public static function fromServerResult(array $serverResult, Job $originalJob): self
     {
         if (empty($serverResult['html']) && empty($serverResult['error'])) {
             throw new \InvalidArgumentException('Server result malformed');
