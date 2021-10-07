@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace WF\Hypernova\Tests;
 
+use GuzzleHttp\Handler\MockHandler;
 use PHPUnit\Framework\TestCase;
 use WF\Hypernova\Job;
 use WF\Hypernova\JobResult;
@@ -141,7 +142,7 @@ class RendererTest extends TestCase
         $response = $renderer->render();
 
         $this->assertInstanceOf(Response::class, $response);
-        $this->assertNull($response->error);
+        self::assertNull($response->error);
 
         $this->assertStringStartsWith('<div data-hypernova-key="my_component"', $response->results['id1']->html);
     }
@@ -327,17 +328,17 @@ class RendererTest extends TestCase
      */
     private function getMockedRenderer(
         bool $shouldSendRequest,
-        ?int $clientResponseCode = 200,
+        int $clientResponseCode = 200,
         $additionalMockMethods = [],
         ?string $clientResponse = null
     ) {
         // Secret sauce so we don't have to mock our HTTP client
-        $mockHandler = new \GuzzleHttp\Handler\MockHandler(
+        $mockHandler = new MockHandler(
             [
                 new \GuzzleHttp\Psr7\Response(
                     $clientResponseCode,
                     [],
-                    $clientResponseCode == 200 ? ($clientResponse ?: self::$rawServerResponse) : null
+                    $clientResponseCode === 200 ? ($clientResponse ?: self::$rawServerResponse) : null
                 )
             ]
         );

@@ -11,18 +11,13 @@ class DevModePlugin extends BasePlugin
         return array_map([$this, 'wrapErrors'], $jobResults);
     }
 
-    /**
-     * @param JobResult $jobResult
-     *
-     * @return string|JobResult
-     */
-    protected function wrapErrors(JobResult $jobResult)
+    protected function wrapErrors(JobResult $jobResult): JobResult
     {
         if (!$jobResult->error) {
             return $jobResult;
         }
 
-        list($message, $formattedStack) = $this->formatError($jobResult->error);
+        [$message, $formattedStack] = $this->formatError($jobResult->error);
 
         // technically for purity we should make a new JobResult here rather than mutating the old one, but... eh.
         $jobResult->html = sprintf(

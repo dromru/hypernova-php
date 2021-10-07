@@ -8,11 +8,10 @@ interface Plugin
 {
     /**
      * @param string $name
-     * @param array $data
      *
-     * @return array
+     * @return array|null
      */
-    public function getViewData($name, array $data);
+    public function getViewData($name, ?array $data);
 
     /**
      * @param Job[]   $jobs

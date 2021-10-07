@@ -10,6 +10,8 @@
 
 namespace WF\Hypernova;
 
+use Ramsey\Uuid\Uuid;
+
 class Renderer
 {
 
@@ -194,7 +196,7 @@ class Renderer
         $result->error = $topLevelError;
         $result->results = array_map(function (Job $job) {
             $jobResult = new JobResult();
-            $uuid = \Ramsey\Uuid\Uuid::uuid4();
+            $uuid = Uuid::uuid4();
             $jobResult->html = $this->getFallbackHTML($job->name, $job->data, $uuid);
             $jobResult->meta = ['uuid' => $uuid->toString()];
             $jobResult->originalJob = $job;
@@ -207,7 +209,7 @@ class Renderer
 
     /**
      * @param string $moduleName
-     * @param array $data
+     * @param array|null $data
      * @param \Ramsey\Uuid\UuidInterface $uuid
      *
      * @return string
@@ -226,7 +228,7 @@ class Renderer
     /**
      * @return Job[]
      */
-    protected function createJobs()
+    protected function createJobs(): array
     {
         return array_map(function (Job $job) {
             foreach ($this->plugins as $plugin) {

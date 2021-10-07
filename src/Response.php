@@ -1,19 +1,12 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: beroberts
- * Date: 1/14/17
- * Time: 12:58 PM
- */
+
+declare(strict_types=1);
 
 namespace WF\Hypernova;
 
 class Response
 {
-    /**
-     * @var \Exception
-     */
-    public $error;
+    public ?\Exception $error;
 
     /**
      * @var \WF\Hypernova\JobResult[]
