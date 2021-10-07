@@ -1,20 +1,15 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: beroberts
- * Date: 1/17/17
- * Time: 2:06 PM
- */
 
 namespace WF\Hypernova\Tests;
 
+use PHPUnit\Framework\TestCase;
 use WF\Hypernova\Job;
 use WF\Hypernova\JobResult;
 use WF\Hypernova\Plugins\DevModePlugin;
 
-class DevModePluginTest extends \PHPUnit\Framework\TestCase
+class DevModePluginTest extends TestCase
 {
-    public function testAfterResponseWithErrors()
+    public function testAfterResponseWithErrors(): void
     {
         $response = json_decode(\WF\Hypernova\Tests\RendererTest::$rawErrorResponse, true);
         $jobResults = array_map(function ($jobResult) {
@@ -27,12 +22,21 @@ class DevModePluginTest extends \PHPUnit\Framework\TestCase
 
         $myJobResultMarkup = (string) $pluginJobResults['myView'];
 
-        $this->assertContains('The <code>nonexistent_component</code> component failed to render with Hypernova', $myJobResultMarkup);
-        $this->assertContains('ReferenceError: Component "nonexistent_component" not registered', $myJobResultMarkup);
-        $this->assertContains('at processImmediate [as _immediateCallback] (timers.js:533:5)', $myJobResultMarkup);
+        $this->assertStringContainsString(
+            'The <code>nonexistent_component</code> component failed to render with Hypernova',
+            $myJobResultMarkup
+        );
+        $this->assertStringContainsString(
+            'ReferenceError: Component "nonexistent_component" not registered',
+            $myJobResultMarkup
+        );
+        $this->assertStringContainsString(
+            'at processImmediate [as _immediateCallback] (timers.js:533:5)',
+            $myJobResultMarkup
+        );
     }
 
-    public function testAfterResponseWithoutErrors()
+    public function testAfterResponseWithoutErrors(): void
     {
         $response = json_decode(\WF\Hypernova\Tests\RendererTest::$rawServerResponse, true);
 
@@ -46,8 +50,11 @@ class DevModePluginTest extends \PHPUnit\Framework\TestCase
 
         $myJobResultMarkup = (string) $pluginJobResults['myView'];
 
-        $this->assertNotContains('failed to render', $myJobResultMarkup);
-        $this->assertContains('<div>My Component</div>', $myJobResultMarkup);
-        $this->assertContains('<script type="application/json" data-hypernova-key="my_component"', $myJobResultMarkup);
+        $this->assertStringNotContainsString('failed to render', $myJobResultMarkup);
+        $this->assertStringContainsString('<div>My Component</div>', $myJobResultMarkup);
+        $this->assertStringContainsString(
+            '<script type="application/json" data-hypernova-key="my_component"',
+            $myJobResultMarkup
+        );
     }
 }
