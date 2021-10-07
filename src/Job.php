@@ -8,7 +8,7 @@
 
 namespace WF\Hypernova;
 
-class Job implements \JsonSerializable
+final class Job implements \JsonSerializable
 {
     public $name;
 
@@ -38,7 +38,7 @@ class Job implements \JsonSerializable
             throw new \InvalidArgumentException('malformed job');
         }
         $metadata = isset($arr['metadata']) ? $arr['metadata'] : [];
-        return new static($arr['name'], $arr['data'], $metadata);
+        return new self($arr['name'], $arr['data'], $metadata);
     }
 
     public function jsonSerialize()

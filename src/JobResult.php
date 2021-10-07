@@ -8,7 +8,7 @@
 
 namespace WF\Hypernova;
 
-class JobResult
+final class JobResult
 {
     /**
      * @var string
@@ -52,7 +52,7 @@ class JobResult
             throw new \InvalidArgumentException('Server result malformed');
         }
 
-        $res = new static();
+        $res = new self();
 
         $res->error = $serverResult['error'];
         $res->html = $serverResult['html'];
