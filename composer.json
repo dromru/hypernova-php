@@ -5,7 +5,7 @@
     "version": "3.0.1",
     "require": {
         "php": ">=7.4",
-        "guzzlehttp/guzzle": "^7.2",
+        "guzzlehttp/guzzle": "^6|^7",
         "ramsey/uuid": "^3.5",
         "ext-json": "*"
     },
