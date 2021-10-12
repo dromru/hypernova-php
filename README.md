@@ -1,4 +1,4 @@
-# Hypernova-PHP [![Build Status](https://travis-ci.org/wayfair/hypernova-php.svg?branch=master)](https://travis-ci.org/wayfair/hypernova-php) 
+# Hypernova-PHP ![Build Status](https://github.com/dromru/hypernova-php/actions/workflows/master-ci.yaml/badge.svg)
 
 > PHP client for your [Hypernova service](https://github.com/airbnb/hypernova).
 
@@ -12,7 +12,7 @@ So then - write your own node.js service, or use one off the shelf.  Writing you
 
 ## Getting Started
 
-`composer require wayfair/hypernova-php`
+`composer require drom/hypernova-php`
 
 Make a `Renderer`:
 
@@ -67,3 +67,11 @@ Fork it, submit a PR.
 #### Run tests:
 
 `composer test`
+
+#### Run phpstan
+
+`composer analyse`
+
+#### Run PHP fix
+
+`composer fix`
