@@ -6,7 +6,7 @@ namespace WF\Hypernova;
 
 class Response
 {
-    public ?\Exception $error;
+    public ?\Exception $error = null;
 
     /**
      * @var \WF\Hypernova\JobResult[]
