@@ -33,6 +33,7 @@ final class Job implements \JsonSerializable
         return new self($arr['name'], $arr['data'], $metadata);
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return [
