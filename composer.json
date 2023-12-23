@@ -5,7 +5,7 @@
     "require": {
         "php": ">=7.4",
         "guzzlehttp/guzzle": "^6|^7",
-        "ramsey/uuid": "^3.5",
+        "ramsey/uuid": "^3.5|^4",
         "ext-json": "*"
     },
     "require-dev": {
